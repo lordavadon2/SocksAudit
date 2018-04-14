@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface IDAOSock {
 
-    boolean addSock(ISock sock);
-    boolean addSock(ISock[] sock);
+    int addSock(ISock sock);
+    int[] addSock(ISock[] sock);
 
     List<ISock> readSock();
     ISock readSock(int id);

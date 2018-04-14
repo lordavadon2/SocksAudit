@@ -1,8 +1,6 @@
 package com.brainacad.Socks.ModelLayer;
 
-import java.util.Comparator;
-
-public interface ISock extends Comparator {
+public interface ISock{
     void setType(String type);
     void setSize(int size);
     void setColor(String color);

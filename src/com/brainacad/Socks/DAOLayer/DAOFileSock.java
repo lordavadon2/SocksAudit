@@ -19,32 +19,53 @@ public class DAOFileSock implements IDAOSock {
     List<String> data;
     List<ISock> sockCollection;
     FileReader fr;
+    Path path;
     public DAOFileSock() throws IOException {
 
-        Path path = Paths.get("testDataFile.txt");
+        path = Paths.get("testDataFile.txt");
         data = Files.readAllLines(path);
         sockCollection = new ArrayList<>();
+        readSock();
+    }
+
+    private int getNewId(){
+        return sockCollection.size() == 0 ? 0 : sockCollection.get(sockCollection.size()-1).getId()+1;
     }
 
     @Override
-    public boolean addSock(ISock sock) {
+    public int addSock(ISock sock) {
         if (sock.getId() < 0){
-            int lastId = sockCollection.get(sockCollection.size()-1).getId();
-            
+            ISock newSock = new SockData(getNewId(), sock);
+            sockCollection.add(newSock);
+            data.add(newSock.toString());
         }
+        try {
+            Files.write(path, data);
+        } catch (IOException e) {
+            return -1;
+        }
+        return sock.getId();
+        //TO DO
+        //Change save data algoritm, decrease file write operation
+        //remove to use data collection
     }
 
     @Override
-    public boolean addSock(ISock[] sock) {
-        return false;
+    public int[] addSock(ISock[] sock) {
+        int[] result = new int[sock.length];
+        int i = 0;
+        for (ISock element: sock) {
+            result[i++] = addSock(element);
+        }
+        return result;
     }
 
     ISock stringToSock(String str){
-        String[] fields = str.split("|");
+        String[] fields = str.split("\\|");
         int id = Integer.parseInt(fields[0]);
         String type = fields[1];
-        String color = fields[2];
-        int size = Integer.parseInt(fields[3]);
+        int size = Integer.parseInt(fields[2]);
+        String color = fields[3];
         return new SockData(type, color, size, id);
     }
 
@@ -65,7 +86,14 @@ public class DAOFileSock implements IDAOSock {
 
     @Override
     public ISock readSock(int id) {
-        return null;
+        ISock result = null;
+        for (ISock sock: sockCollection) {
+            if (sock.getId() == id){
+                result = sock;
+                break;
+            }
+        }
+        return result;
     }
 
     @Override

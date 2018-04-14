@@ -1,0 +1,2 @@
+0|Stringi|12345|Black
+1|Getri|123|Red

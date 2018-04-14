@@ -28,6 +28,14 @@ public class SockData implements ISock, Comparable {
         this.id = id;
     }
 
+
+    public SockData(int id, ISock sock) {
+        this.type = sock.getTypes();
+        this.color = sock.getColor();
+        this.size = sock.getSize();
+        this.id = id;
+    }
+
     @Override
     public void setType(String type) {
         this.type = type;
@@ -64,13 +72,8 @@ public class SockData implements ISock, Comparable {
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("");
-        sb.append(this.id);
-        sb.append("|" + this.type);
-        sb.append("|" + this.size);
-        sb.append("|" + this.color);
-        return sb.toString();
+    public int compareTo(ISock o2) {
+        return 0;
     }
 
     @Override
@@ -81,4 +84,16 @@ public class SockData implements ISock, Comparable {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("");
+        sb.append(this.id);
+        sb.append("|" + this.type);
+        sb.append("|" + this.size);
+        sb.append("|" + this.color);
+        return sb.toString();
+    }
+
+
 }
