@@ -34,5 +34,17 @@ public class ConsoleSock implements IUISock {
         }
     }
 
+    public void updateSock(ISock sock){
+        Scanner sc = new Scanner(System.in)
+        System.out.println("Data to change: ");
+        showSock(sock);
+        System.out.println("Please input field to change: ");
+        int fieldIndex = Integer.parseInt(sc.nextLine());
+        System.out.println("Please input new value: ");
+        String newValue = sc.nextLine();
+
+
+    }
+
 
 }

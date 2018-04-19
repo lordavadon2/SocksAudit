@@ -16,20 +16,33 @@ import java.util.List;
 
 public class DAOFileSock implements IDAOSock {
 
-    List<String> data;
+//    List<String> data;
     List<ISock> sockCollection;
     FileReader fr;
     Path path;
     public DAOFileSock() throws IOException {
 
         path = Paths.get("testDataFile.txt");
-        data = Files.readAllLines(path);
+        List<String> data = Files.readAllLines(path);
         sockCollection = new ArrayList<>();
-        readSock();
+        readSock(data);
     }
 
     private int getNewId(){
         return sockCollection.size() == 0 ? 0 : sockCollection.get(sockCollection.size()-1).getId()+1;
+    }
+
+    public boolean dataWrite(){
+        try {
+            List<String> stringSockData = new ArrayList<>();
+            for (ISock sock:sockCollection) {
+                stringSockData.add(sock.toString());
+            }
+            Files.write(path, stringSockData);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -37,13 +50,9 @@ public class DAOFileSock implements IDAOSock {
         if (sock.getId() < 0){
             ISock newSock = new SockData(getNewId(), sock);
             sockCollection.add(newSock);
-            data.add(newSock.toString());
+//            data.add(newSock.toString());
         }
-        try {
-            Files.write(path, data);
-        } catch (IOException e) {
-            return -1;
-        }
+        dataWrite();
         return sock.getId();
         //TO DO
         //Change save data algoritm, decrease file write operation
@@ -69,8 +78,13 @@ public class DAOFileSock implements IDAOSock {
         return new SockData(type, color, size, id);
     }
 
-    @Override
-    public List<ISock> readSock() {
+
+    public List<ISock> getSockCollection(){
+        return sockCollection;
+    }
+
+//    @Override
+    private List<ISock> readSock(List<String> data) {
         for (String str : data) {
             ISock sock = stringToSock(str);
             sockCollection.add(sock);
@@ -83,6 +97,7 @@ public class DAOFileSock implements IDAOSock {
         });
         return sockCollection;
     }
+
 
     @Override
     public ISock readSock(int id) {
@@ -98,12 +113,27 @@ public class DAOFileSock implements IDAOSock {
 
     @Override
     public boolean updateSock(ISock changedSock) {
+        boolean result = true;
+        ISock oldSock = readSock(changedSock.getId());
+        if (oldSock != null) {
+            int index = sockCollection.indexOf(oldSock);
+            sockCollection.remove(oldSock);
+            sockCollection.add(index, changedSock);
+            dataWrite();
+            return result;
+        }
         return false;
     }
 
     @Override
     public boolean deleteSock(int id) {
-        return false;
+        ISock deleteSock = readSock(id);
+        if (null == deleteSock) {
+            return false;
+        }
+            sockCollection.remove(deleteSock);
+            dataWrite();
+            return true;
     }
 
     @Override
